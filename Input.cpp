@@ -26,13 +26,13 @@ Input::Input(const std::shared_ptr<Context>& context)
 // 헤더파일에 써놓음
 LRESULT Input::MsgProc(HWND handle, const uint & message, const WPARAM & wParam, const LPARAM & lParam)
 {
-    if (message == WM_LBUTTONDOWN || message == WM_MOUSEMOVE)
+    if (message == WM_LBUTTONDOWN || message == WM_MOUSEMOVE)  // 좌클릭 또는 마우스 이동시
     {
         mousePosition.x = static_cast<float>(LOWORD(lParam));
         mousePosition.y = static_cast<float>(HIWORD(lParam));
     }
 
-    if (message == WM_MOUSEWHEEL)
+    if (message == WM_MOUSEWHEEL)                              // 휠이 굴러갈 시
     {
         short tWheelValue = static_cast<short>(HIWORD(wParam));
 
@@ -143,7 +143,7 @@ void Input::Update()
 
     wheelMoveValue = wheelStatus - wheelOldStatus; // 마우스 이동 값 저장
 
-    wheelOldStatus.z = wheelStatus.z; // Z축..?
+    wheelOldStatus.z = wheelStatus.z; // 휠굴림 값 
 	
 /**************************더블클릭 체크************************/
     ulong tButtonStatus = GetTickCount();
