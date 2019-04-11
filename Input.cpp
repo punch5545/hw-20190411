@@ -10,20 +10,20 @@ Input::Input(const std::shared_ptr<Context>& context)
     , wheelOldStatus(0)
     , wheelMoveValue(0)
 {
-    MouseProc = std::bind // ÇÔ¼öÈ£ÃâÀ» ¹Ì¸® Á¤ÀÇÇØ³õÀ½
+    MouseProc = std::bind // í•¨ìˆ˜í˜¸ì¶œì„ ë¯¸ë¦¬ ì •ì˜í•´ë†“ìŒ
     (
         &Input::MsgProc,
         this,
         std::placeholders::_1,
         std::placeholders::_2,
         std::placeholders::_3,
-        std::placeholders::_4   // ¸Ş½ÃÁö°¡ ¾ÆÁ÷ ¾øÀ¸¹Ç·Î °ø°£À» ¹Ì¸® ¹Ş¾Æ¼­ °¡Áö°íÀÖÀ½.
+        std::placeholders::_4   // ë©”ì‹œì§€ê°€ ì•„ì§ ì—†ìœ¼ë¯€ë¡œ ê³µê°„ì„ ë¯¸ë¦¬ ë°›ì•„ì„œ ê°€ì§€ê³ ìˆìŒ.
     );
 
     EventSystem::Get().Subscribe(EventType::Event_Update, EVENT_HANDLER(Update));
 }
 
-// Çì´õÆÄÀÏ¿¡ ½á³õÀ½
+// í—¤ë”íŒŒì¼ì— ì¨ë†“ìŒ
 LRESULT Input::MsgProc(HWND handle, const uint & message, const WPARAM & wParam, const LPARAM & lParam)
 {
     if (message == WM_LBUTTONDOWN || message == WM_MOUSEMOVE)
@@ -45,7 +45,7 @@ LRESULT Input::MsgProc(HWND handle, const uint & message, const WPARAM & wParam,
 
 const bool Input::Initialize()
 {
-	// ¹è¿­ 0À¸·Î ÃÊ±âÈ­
+	// ë°°ì—´ 0ìœ¼ë¡œ ì´ˆê¸°í™”
     ZeroMemory(keyState, sizeof(keyState));
     ZeroMemory(keyOldState, sizeof(keyOldState));
     ZeroMemory(keyMap, sizeof(keyMap));
@@ -55,7 +55,7 @@ const bool Input::Initialize()
     ZeroMemory(startDblClk, sizeof(ulong) * MAX_INPUT_MOUSE);
     ZeroMemory(buttonCount, sizeof(int) * MAX_INPUT_MOUSE);
 
-	// ´õºíÅ¬¸¯ Ã¼Å© ½Ã Ã¹Å¬¸¯-µÎ¹øÂ° Å¬¸¯±îÁö Á¦ÇÑ½Ã°£
+	// ë”ë¸”í´ë¦­ ì²´í¬ ì‹œ ì²«í´ë¦­-ë‘ë²ˆì§¸ í´ë¦­ê¹Œì§€ ì œí•œì‹œê°„
     timeDblClk = GetDoubleClickTime();
     startDblClk[0] = GetTickCount();
 
@@ -66,7 +66,7 @@ const bool Input::Initialize()
 
     ulong tLine = 0;
 
-	// ½Ã½ºÅÛ Àü¿ªÀÇ ÆÄ¶ó¹ÌÅÍ¸¦ °¡Á®¿È. ¿©±â¼­´Â ÈÙ±¼¸² °¨Áö¿¡ »ç¿ë
+	// ì‹œìŠ¤í…œ ì „ì—­ì˜ íŒŒë¼ë¯¸í„°ë¥¼ ê°€ì ¸ì˜´. ì—¬ê¸°ì„œëŠ” íœ êµ´ë¦¼ ê°ì§€ì— ì‚¬ìš©
     SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &tLine, 0);
 
     return true;
@@ -81,7 +81,7 @@ void Input::Update()
 
     GetKeyboardState(keyState);
 
-	// Å°º¸µå ·ÕÅÇÀÎÁö, ´Ü¼ø ÀÔ·ÂÀÎÁö È®ÀÎ
+	// í‚¤ë³´ë“œ ë¡±íƒ­ì¸ì§€, ë‹¨ìˆœ ì…ë ¥ì¸ì§€ í™•ì¸
     for (ulong i = 0; i < MAX_INPUT_KEY; i++)
     {
         byte key = keyState[i] & 0x80;
@@ -91,90 +91,90 @@ void Input::Update()
         int state = keyState[i];
 
         if (oldState == 0 && state == 1)
-            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_DOWN);  // ÀÌÀü 0, ÇöÀç 1 - KeyDown
+            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_DOWN);  // ì´ì „ 0, í˜„ì¬ 1 - KeyDown
         else if (oldState == 1 && state == 0)									 
-            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_UP);	  // ÀÌÀü 1, ÇöÀç 0 - KeyUp
+            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_UP);	  // ì´ì „ 1, í˜„ì¬ 0 - KeyUp
         else if (oldState == 1 && state == 1)									 
-            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_PRESS); // ÀÌÀü 1, ÇöÀç 1 - KeyPress
+            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_PRESS); // ì´ì „ 1, í˜„ì¬ 1 - KeyPress
         else
-            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_NONE);  // ÀÌÀü 0, ÇöÀç 0
+            keyMap[i] = static_cast<uint>(KeyStatus::KEY_INPUT_STATUS_NONE);  // ì´ì „ 0, í˜„ì¬ 0
     }
 
-	// 255°³ÀÇ °ª ¸ğµÎ º¹»ç (currentStatus to oldStatus)
+	// 255ê°œì˜ ê°’ ëª¨ë‘ ë³µì‚¬ (currentStatus to oldStatus)
     memcpy(buttonOldStatus, buttonStatus, sizeof(byte) * MAX_INPUT_MOUSE);
 
-	//currentStatus 0À¸·Î ÃÊ±âÈ­.
+	//currentStatus 0ìœ¼ë¡œ ì´ˆê¸°í™”.
     ZeroMemory(buttonStatus, sizeof(byte) * MAX_INPUT_MOUSE);
     ZeroMemory(buttonMap, sizeof(byte) * MAX_INPUT_MOUSE);
 
-	// ´­¸° »óÅÂ¶ó¸é 1, ¾È´­¸° »óÅÂ¶ó¸é 0
-    buttonStatus[0] = GetAsyncKeyState(VK_LBUTTON) & 0x8000 ? 1 : 0; // ÁÂÅ¬¸¯
-    buttonStatus[1] = GetAsyncKeyState(VK_RBUTTON) & 0x8000 ? 1 : 0; // ¿ìÅ¬¸¯
-    buttonStatus[2] = GetAsyncKeyState(VK_MBUTTON) & 0x8000 ? 1 : 0; // ÈÙÅ¬¸¯
+	// ëˆŒë¦° ìƒíƒœë¼ë©´ 1, ì•ˆëˆŒë¦° ìƒíƒœë¼ë©´ 0
+    buttonStatus[0] = GetAsyncKeyState(VK_LBUTTON) & 0x8000 ? 1 : 0; // ì¢Œí´ë¦­
+    buttonStatus[1] = GetAsyncKeyState(VK_RBUTTON) & 0x8000 ? 1 : 0; // ìš°í´ë¦­
+    buttonStatus[2] = GetAsyncKeyState(VK_MBUTTON) & 0x8000 ? 1 : 0; // íœ í´ë¦­
 
 
-	// µå·¡±×ÀÎÁö Å¬¸¯ÀÎÁö È®ÀÎ
+	// ë“œë˜ê·¸ì¸ì§€ í´ë¦­ì¸ì§€ í™•ì¸
     for (ulong i = 0; i < MAX_INPUT_MOUSE; i++)
     {
         int tOldStatus = buttonOldStatus[i];
         int tStatus = buttonStatus[i];
 
         if (tOldStatus == 0 && tStatus == 1)
-            buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DOWN);  // ÀÌÀü 0, ÇöÀç 1 - KeyDown
+            buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DOWN);  // ì´ì „ 0, í˜„ì¬ 1 - KeyDown
 		else if (tOldStatus == 1 && tStatus == 0)									   
-			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_UP);	   // ÀÌÀü 1, ÇöÀç 0 - KeyUp
+			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_UP);	   // ì´ì „ 1, í˜„ì¬ 0 - KeyUp
 		else if (tOldStatus == 1 && tStatus == 1)									   
-			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_PRESS); // ÀÌÀü 1, ÇöÀç 1 - KeyPress (Drag)
+			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_PRESS); // ì´ì „ 1, í˜„ì¬ 1 - KeyPress (Drag)
 		else																		   
-			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_NONE);  // ÀÌÀü 0, ÇöÀç 0
+			buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_NONE);  // ì´ì „ 0, í˜„ì¬ 0
     }
 
-/*************************¸¶¿ì½º º¸¿©ÁÜ*************************/
+/*************************ë§ˆìš°ìŠ¤ ë³´ì—¬ì¤Œ*************************/
     POINT point = { 0, 0 };
     GetCursorPos(&point);
     ScreenToClient(Settings::Get().GetWindowHandle(), &point);
 
-/**************************¸¶¿ì½ºÀÌµ¿***************************/
+/**************************ë§ˆìš°ìŠ¤ì´ë™***************************/
     wheelOldStatus.x = wheelStatus.x;
     wheelOldStatus.y = wheelStatus.y;
 
     wheelStatus.x = static_cast<float>(point.x);
     wheelStatus.y = static_cast<float>(point.y);
 
-    wheelMoveValue = wheelStatus - wheelOldStatus;
+    wheelMoveValue = wheelStatus - wheelOldStatus; // ë§ˆìš°ìŠ¤ ì´ë™ ê°’ ì €ì¥
 
-    wheelOldStatus.z = wheelStatus.z; // ÈÙ±¼¸² °ª ÀúÀå
+    wheelOldStatus.z = wheelStatus.z; // Zì¶•..?
 	
-/**************************´õºíÅ¬¸¯ Ã¼Å©************************/
+/**************************ë”ë¸”í´ë¦­ ì²´í¬************************/
     ulong tButtonStatus = GetTickCount();
     for (ulong i = 0; i < MAX_INPUT_MOUSE; i++)
     {
-        if (buttonMap[i] == static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DOWN)) // ¹öÆ° DOWNÀÌ¸é
+        if (buttonMap[i] == static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DOWN)) // ë²„íŠ¼ DOWNì´ë©´
         {
             if (buttonCount[i] == 1)
-            {																		   // ÇöÀç ´©¸¥ ½Ã°£°ú ÀÌÀü¿¡ ´©¸¥ ½Ã°£ÀÇ Â÷°¡ ÀÏÁ¤ ½Ã°£À» ³Ñ±æ °æ¿ì count ÃÊ±âÈ­
+            {																		   // í˜„ì¬ ëˆ„ë¥¸ ì‹œê°„ê³¼ ì´ì „ì— ëˆ„ë¥¸ ì‹œê°„ì˜ ì°¨ê°€ ì¼ì • ì‹œê°„ì„ ë„˜ê¸¸ ê²½ìš° count ì´ˆê¸°í™”
                 if ((tButtonStatus - startDblClk[i]) >= timeDblClk)
                     buttonCount[i] = 0;
             }
-            buttonCount[i]++;														   // ¾Æ´Ï¸é Å¬¸¯È½¼ö 1 Áõ°¡
+            buttonCount[i]++;														   // ì•„ë‹ˆë©´ í´ë¦­íšŸìˆ˜ 1 ì¦ê°€
 
             if (buttonCount[i] == 1)
                 startDblClk[i] = tButtonStatus;
         }
 
-        if (buttonMap[i] == static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_UP))   // ¹öÆ° UP»óÅÂÀÌ¸é
+        if (buttonMap[i] == static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_UP))   // ë²„íŠ¼ UPìƒíƒœì´ë©´
         {
             if (buttonCount[i] == 1)
             {
-                if ((tButtonStatus - startDblClk[i]) >= timeDblClk)					   // ÇöÀç ´©¸¥ ½Ã°£°ú ÀÌÀü¿¡ ´©¸¥ ½Ã°£ÀÇ Â÷°¡ ÀÏÁ¤ ½Ã°£À» ³Ñ±æ °æ¿ì count ÃÊ±âÈ­
-                    buttonCount[i] = 0;												   // DOWN¿¡¼­ Áõ°¡½ÃÄ×À¸¹Ç·Î UP¿¡¼­´Â Áõ°¡½ÃÅ°Áø ¾ÊÀ½.
+                if ((tButtonStatus - startDblClk[i]) >= timeDblClk)					   // í˜„ì¬ ëˆ„ë¥¸ ì‹œê°„ê³¼ ì´ì „ì— ëˆ„ë¥¸ ì‹œê°„ì˜ ì°¨ê°€ ì¼ì • ì‹œê°„ì„ ë„˜ê¸¸ ê²½ìš° count ì´ˆê¸°í™”
+                    buttonCount[i] = 0;												   // DOWNì—ì„œ ì¦ê°€ì‹œì¼°ìœ¼ë¯€ë¡œ UPì—ì„œëŠ” ì¦ê°€ì‹œí‚¤ì§„ ì•ŠìŒ.
             }
             else if (buttonCount[i] == 2)
             {
-                if ((tButtonStatus - startDblClk[i]) <= timeDblClk)                    // ÀÏÁ¤ ½Ã°£ ÀÌ³»¿¡ µÎ¹øÂ° Å¬¸¯ÀÌ ÀÌ·ïÁ³À» °æ¿ì
-                    buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DBLCLK); // ¾ê ´õºíÅ¬¸¯(´õºíÅÇ) Çß´Ù!
+                if ((tButtonStatus - startDblClk[i]) <= timeDblClk)                    // ì¼ì • ì‹œê°„ ì´ë‚´ì— ë‘ë²ˆì§¸ í´ë¦­ì´ ì´ë¤„ì¡Œì„ ê²½ìš°
+                    buttonMap[i] = static_cast<uint>(ButtonStatus::BUTTON_INPUT_STATUS_DBLCLK); // ì–˜ ë”ë¸”í´ë¦­(ë”ë¸”íƒ­) í–ˆë‹¤!
 
-                buttonCount[i] = 0;													   // count 0À¸·Î ÃÊ±âÈ­. ÇÏÁö ¾ÊÀ¸¸é ÇÑ¹ø ´õºíÅ¬¸¯ ÇÏ¸é ´õÀÌ»ó ´õºíÅ¬¸¯ ¾ÈµÊ.
+                buttonCount[i] = 0;													   // count 0ìœ¼ë¡œ ì´ˆê¸°í™”. í•˜ì§€ ì•Šìœ¼ë©´ í•œë²ˆ ë”ë¸”í´ë¦­ í•˜ë©´ ë”ì´ìƒ ë”ë¸”í´ë¦­ ì•ˆë¨.
             }
         }//if
     }//for(i)
